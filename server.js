@@ -6,7 +6,7 @@ const app = express()
 app.use(express.json())
 
 
-app.use('/')
+app.use('/' ,require('./routes'))
 
 app.listen(port,()=>{
     console.log(`listening on http://localhost:${port}`)
