@@ -1,26 +1,78 @@
 const router = require('express').Router()
+const User = require('../../models/User')
 
 router.route('/')
 .get((req,res)=>{
-    res.send('made it to user api route')
+    User.find({}).then(data=>{
+        if(!data){
+            res.status(404).json({message:' you must be lost'})
+        }else{
+            res.json(data)
+        }
+    })
 })
 .post((req,res)=>{
-    res.json(req.body)
+    User.create(req.body).then(data =>{
+        res.status(200).json(data)
+    }).catch(err=>{
+        res.json({message:'error'})
+    })
 })
 
 
 router.route('/:id')
 .get((req,res)=>{
-    res.send(req.params.id)
-})
-.post((req,res)=>{
-    res.json(req.body)
+   User.findById({_id:req.params.id}).then(data=>{
+    if(!data){
+        res.status(404).json({message: 'you must be lost'})
+    }else{
+        res.json(data)
+    }
+   })
 })
 .put((req,res)=>{
-    res.json(req.body)
+   User.findByIdAndUpdate({_id:req.params.id},req.body).then(data=>{
+    if(!data){
+        console.log("error something went wrong")
+        res.status(404).json({message:"User not found"})
+    }else{
+        res.status(200).json(data)
+    }
+   })
 })
+
+
+router.route('/:id/friends/:friendId')
+.post((req,res)=>{
+        User.findOneAndUpdate(
+            { _id: req.params.id },
+            { $addToSet: { friends: req.params.friendId } },
+            { runValidators: true, new: true }
+        ).then(data=>{
+            if(!data){
+                res.status(404).json({message:'User no found'})
+            }else{
+                res.status(200).json(data)
+            }
+        }).catch((req,res)=>{
+            res.status(500).json({message:'Server error'})
+        })
+    },)
 .delete((req,res)=>{
-    res.json({message:`${req.params.id} has been deleted`})
-})
+    User.findOneAndUpdate(
+        { _id: req.params.id },
+        { $pull: { friends: req.params.friendId } },
+        { new: true }
+    )
+        .then(data=>{
+            if(!data){
+                res.status(404).json({message:'User no found'})
+            }else{
+                res.status(200).json(data)
+            }
+        }).catch(data=>{
+            res.status(500).json({message:'Server error'})
+        })
+});
 
 module.exports = router

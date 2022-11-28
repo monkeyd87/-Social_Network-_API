@@ -1,8 +1,9 @@
 const router = require('express').Router()
+const Reaction = require('../../models/Reaction')
 
 router.route('/')
 .get((req,res)=>{
-    res.send('made it to reaction api route')
+    Reaction.find({})
 })
 .post((req,res)=>{
     res.json(req.body)
