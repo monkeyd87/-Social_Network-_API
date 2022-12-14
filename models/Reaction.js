@@ -1,5 +1,5 @@
 const {Schema, Types} = require('mongoose')
-const {moments} = requier(moments)
+const moment = require('moment')
 
 const reactionSchema = new Schema({
     reactionId: {
