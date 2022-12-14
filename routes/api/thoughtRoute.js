@@ -12,11 +12,14 @@ router.route('/')
         }
     })
 })
-.post((rea,res)=>{
+.post((req,res)=>{
     Thought.create(req.body).then(data=>{
-        if(!data) res.status(404).json({message:'error'}) 
+        if(!data) {res.status(404).json({message:'error'}) 
         return
-    })
+        
+    }
+    res.status(200).json(data)
+    }) 
 })
 
 
