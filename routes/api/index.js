@@ -5,8 +5,6 @@ const router = require('express').Router()
 
 router.use('/users',require('./userRoute'))
 router.use('/thoughts',require('./thoughtRoute'))
-router.use('/reactions',require('./reactionRoute'))
-
 router.route('/')
 .get((req,res)=>{
     res.send('you made it to the api route')

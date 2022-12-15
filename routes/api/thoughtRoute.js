@@ -10,20 +10,28 @@ router.route('/')
         }else{
             res.status(200).json(data)
         }
-    })
+    }).catch(error=> res.status(500).json({message:"server error"}))
 })
 .post((req,res)=>{
-    Thought.create(req.body).then(data=>{
-        if(!data) {res.status(404).json({message:'error'}) 
-        return
-        
-    }
-    res.status(200).json(data)
-    }) 
+    Thought.create(req.body).then(({_id})=>{
+      return User.findOneAndUpdate(
+        { _id :req.body.userId},
+        {$push:{thoughts: _id }},
+        {new:true}
+      )
+    }).then(data=>{
+        if(!data){
+            
+     res.status(404).json({message:"user not found"})
+     return
+
+        }res.json(data)
+    }).catch(err=>{
+        res.status(500).json
+    })
+
+
 })
-
-
-
 router.route('/:id')
 .get((req,res)=>{
     Thought.findOne({ _id: req.params.id })
